@@ -29,7 +29,8 @@ Additionally, any C<META> tags are turned into Plucene fields.
 
 sub gather_data_from_file {
     my ($self, $filename) = @_;
-    my $tree = HTML::TreeBuilder->new->parse_file($filename) or return;
+    my $tree = HTML::TreeBuilder->new;
+    $tree->parse_file($filename);
     for($tree->look_down(_tag => "meta")) {
         next if $_->attr("http-equiv");
         next unless $_->attr("value");
@@ -39,6 +40,7 @@ sub gather_data_from_file {
         $self->add_data("link", "Text", $_->[0]);
     }
     $self->add_data("text", "UnStored", $tree->as_trimmed_text);
+    return $self;
 }
 
 1;

@@ -5,7 +5,7 @@ use_ok("Plucene::SearchEngine::Index");
 my $indexer = Plucene::SearchEngine::Index->new(dir => "t/test_index");
 isa_ok($indexer, "Plucene::SearchEngine::Index");
 
-my $hash = Plucene::SearchEngine::Index::File->examine("MANIFEST");
+my ($hash) = Plucene::SearchEngine::Index::File->examine("MANIFEST");
 is($hash->{filename}{data}[0], "MANIFEST", "filename stored");
 isa_ok($hash->{modified}{data}[0], "Time::Piece", "Last mod date stored");
 is($hash->{text}{data}[0], "Changes\n", "First line stored");

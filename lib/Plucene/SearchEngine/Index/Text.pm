@@ -23,5 +23,6 @@ sub gather_data_from_file {
     while (<$in>) {
         $self->add_data("text" => "UnStored" => $_);
     }
+    return $self;
 }
 1;

@@ -2,6 +2,7 @@ package Plucene::SearchEngine::Index::URL;
 use base "Plucene::SearchEngine::Index::Base";
 
 use strict;
+use Carp;
 use Time::Piece;
 use File::Temp;
 use URI;
@@ -91,10 +92,17 @@ sub examine {
         print $fh $response->content;
     }
     close $fh;
-    $self->gather_data_from_file($tmpfile);
-    $self->add_data("encoding", "Text", $encoding) if $encoding;
+    my @docs = $self->gather_data_from_file($tmpfile);
+    if (@docs <2) { @docs = ($self) }
+    if ($encoding) { 
+        $_->add_data("encoding", "Text", $encoding) for @docs;
+    }
     unlink $tmpfile;
-    return $self;
+    if (wantarray) { return @docs } 
+    else { 
+        carp "Using ->examine in scalar context is deprecated";
+        return $docs[0]; 
+    }
 }
 
 1;

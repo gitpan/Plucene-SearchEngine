@@ -21,6 +21,7 @@ sub gather_data_from_file {
     return unless -e $html;
     $self->Plucene::SearchEngine::Index::HTML::gather_data_from_file($html);
     unlink $html;
+    return $self;
 }
 
 1;

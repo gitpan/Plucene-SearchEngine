@@ -1,7 +1,7 @@
 package Plucene::SearchEngine::Index::File;
 use strict;
 use base "Plucene::SearchEngine::Index::Base";
-
+use Carp;
 use File::MMagic;
 use File::Spec::Functions qw(rel2abs);
 use File::Basename;
@@ -59,8 +59,12 @@ sub examine {
     $self->add_data("id", "Keyword", "file://".rel2abs($filename));
     $self->add_data("modified", "Date", Time::Piece->new(stat($filename)->mtime));
     if ($encoding) { $self->add_data("encoding", "Text", $encoding); }
-    $self->gather_data_from_file($filename);
-    return $self;
+    my @docs = $self->gather_data_from_file($filename);
+    if (wantarray) { if (@docs > 1) { return @docs } else { return $self } }
+    else {
+        carp "Using ->examine in scalar context is deprecated";
+        return $self;
+    }
 }
 
 1;

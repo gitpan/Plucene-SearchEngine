@@ -6,7 +6,7 @@ use Module::Pluggable (require => 1, search_path => [qw/Plucene::SearchEngine::I
 use File::Spec::Functions qw(catfile);
 use Plucene::Index::Writer;
 use UNIVERSAL::require;
-our $VERSION = "1.0";
+our $VERSION = "1.1";
 
 __PACKAGE__->plugins;
 
@@ -20,10 +20,10 @@ Plucene::SearchEngine::Index - A higher level abstraction for Plucene
         dir => "/var/lib/plucene" 
     );
 
-    my $document =
-        Plucene::SearchEngine::Index::File->examine("foo.html")->document;
+    my @documents = map { $_->document } 
+        Plucene::SearchEngine::Index::File->examine("foo.html");
 
-    $indexer->index($document);
+    $indexer->index($_) for @documents;
 
 =head1 DESCRIPTION
 
@@ -93,8 +93,14 @@ supplied C<Plucene::SearchEngine::Index::File> or
 C<Plucene::SearchEngine::Index::URL> modules.
 
 These two modules are frontends which gather metadata about a file or
-URL and then hand the data off to one of the backend modules - there
-are backends supplied for PDF, HTML and plain text files.
+URL and then hand the data off to one of the backend modules - there are
+backends supplied for PDF, HTML and plain text files. These in turn
+return a list of documents found in the file or URL. In most cases,
+there'll only be one document, but, for instance, a Unix mbox should
+return an object for each email in the box. These objects can be turned
+into C<Plucene::Document> objects by calling the C<document> method on
+them. This isn't done by default because you may wish to mess with the
+hash yourself, or serialize it, or whatever.
 
 =head2 Creating your own backend
 
